@@ -84,8 +84,6 @@ out
 # HCNoticer build output
 dist/
 
-# HCNoticer state (runtime data)
-data/state.json
 
 # Gatsby files
 .cache/
