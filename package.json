@@ -1,0 +1,24 @@
+{
+  "name": "hcnoticer",
+  "version": "1.0.0",
+  "description": "Sends email alarms about new HackClub YSWS events",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "check": "node dist/index.js --check"
+  },
+  "author": "TheusHen",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "dotenv": "^16.4.7",
+    "html-entities": "^2.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "typescript": "^5.7.3"
+  }
+}

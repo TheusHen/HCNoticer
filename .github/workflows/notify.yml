@@ -1,0 +1,42 @@
+name: HCNoticer
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Restore state
+        uses: actions/cache/restore@v4
+        with:
+          path: data/state.json
+          key: hcnoticer-state-
+          restore-keys: hcnoticer-state-
+
+      - run: npm start
+        env:
+          MAILERSEND_API_KEY: ${{ secrets.MAILERSEND_API_KEY }}
+          EMAIL_FROM_NAME: ${{ secrets.EMAIL_FROM_NAME }}
+          EMAIL_FROM_EMAIL: ${{ secrets.EMAIL_FROM_EMAIL }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+
+      - name: Save state
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: data/state.json
+          key: hcnoticer-state-${{ github.run_id }}
