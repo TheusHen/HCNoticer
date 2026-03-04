@@ -2,6 +2,8 @@
   "knownEvents": [
     "Reboot",
     "Flavortown",
+    "Sleepover",
+    "Stasis",
     "HackCraft",
     "Pxl",
     "Hackvault",
@@ -185,5 +187,5 @@
     "Cargo Cult",
     "Winter Boba Drops"
   ],
-  "lastCheck": "2026-03-03T18:19:22.091Z"
+  "lastCheck": "2026-03-04T00:32:23.358Z"
 }
