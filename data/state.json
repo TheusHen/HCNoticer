@@ -19,7 +19,6 @@
     "Bauble",
     "Fudge",
     "Construct",
-    "Carnival",
     "Remix",
     "Midnight",
     "Axiom",
@@ -59,7 +58,6 @@
     "Toybox",
     "Dummies",
     "Twist",
-    "Terminal Craft v5",
     "Infinity",
     "Tile",
     "Minigame",
@@ -119,6 +117,8 @@
     "Thunder",
     "Shipwrecked",
     "Neighborhood",
+    "Carnival",
+    "Terminal Craft v5",
     "Sprig",
     "OnBoard",
     "Boba Drops",
@@ -192,5 +192,5 @@
     "The hackbook",
     "Rework"
   ],
-  "lastCheck": "2026-03-08T12:12:20.612Z"
+  "lastCheck": "2026-03-08T18:09:54.481Z"
 }
