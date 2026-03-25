@@ -1,7 +1,10 @@
 {
   "knownEvents": [
+    "Resolution",
     "Flavortown",
     "Sleepover",
+    "Remixed",
+    "Enclosure",
     "Stasis",
     "Fallout",
     "Boot",
@@ -16,7 +19,7 @@
     "Meow",
     "Woof",
     "Mosaic",
-    "Hack Club The Game",
+    "Hack Club: The Game",
     "Wacky Files",
     "Bauble",
     "Fudge",
@@ -133,6 +136,7 @@
     "cmd + k",
     "Solder",
     "Track it",
+    "Hackanomous",
     "Kit Lab",
     "Jus'STUDY",
     "Rooted",
@@ -194,5 +198,5 @@
     "The hackbook",
     "Rework"
   ],
-  "lastCheck": "2026-03-25T12:21:25.492Z"
+  "lastCheck": "2026-03-25T18:24:03.797Z"
 }
