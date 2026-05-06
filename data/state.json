@@ -1,6 +1,7 @@
 {
   "knownEvents": [
     "Macondo",
+    "Fix Hack Club",
     "Beest",
     "RaspAPI",
     "Jus'STUDY",
@@ -128,7 +129,6 @@
     "Neighborhood",
     "iplace",
     "Hacklet v2",
-    "Carnival",
     "Terminal Craft v5",
     "Sprig",
     "OnBoard",
@@ -136,6 +136,7 @@
     "Boba Olympics",
     "OnBoard Live",
     "foodie",
+    "Carnival",
     "Armed",
     "Authly",
     "Silicon",
@@ -206,5 +207,5 @@
     "Rework",
     "Hack a Home"
   ],
-  "lastCheck": "2026-05-06T12:43:47.246Z"
+  "lastCheck": "2026-05-06T18:39:40.598Z"
 }
