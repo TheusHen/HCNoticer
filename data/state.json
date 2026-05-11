@@ -1,7 +1,11 @@
 {
   "knownEvents": [
+    "Forge",
+    "Shipyard",
     "Macondo",
+    "Horizons",
     "Fix Hack Club",
+    "Polygon",
     "Beest",
     "RaspAPI",
     "Jus'STUDY",
@@ -151,7 +155,6 @@
     "Shrine",
     "issued",
     "Swatchbox",
-    "Shipyard",
     "Rube Goldburg YSWS",
     "Poetry",
     "Plunge",
@@ -207,5 +210,5 @@
     "Rework",
     "Hack a Home"
   ],
-  "lastCheck": "2026-05-11T00:51:58.469Z"
+  "lastCheck": "2026-05-11T07:20:36.037Z"
 }
