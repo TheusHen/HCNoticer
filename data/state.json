@@ -1,5 +1,6 @@
 {
   "knownEvents": [
+    "You Snake We Snake",
     "MetroShip",
     "Stardance",
     "Keeb",
@@ -150,6 +151,7 @@
     "Silicon",
     "cmd + k",
     "Solder",
+    "Kintsugi",
     "flagged",
     "Bestsellr",
     "Hackanomous",
@@ -189,5 +191,5 @@
     "Hack a Home",
     "Buy The World"
   ],
-  "lastCheck": "2026-06-14T12:45:19.506Z"
+  "lastCheck": "2026-06-14T18:35:20.553Z"
 }
