@@ -1,7 +1,9 @@
 {
   "knownEvents": [
+    "Calculate",
     "You Snake We Snake",
     "MetroShip",
+    "Outpost",
     "Stardance",
     "Keeb",
     "Insert Coin",
@@ -200,5 +202,5 @@
     "Hack a Home",
     "Buy The World"
   ],
-  "lastCheck": "2026-06-24T18:40:05.703Z"
+  "lastCheck": "2026-06-25T00:56:26.721Z"
 }
