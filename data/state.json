@@ -1,5 +1,6 @@
 {
   "knownEvents": [
+    "BLARE",
     "Calculate",
     "You Snake We Snake",
     "MetroShip",
@@ -200,7 +201,8 @@
     "Winter Boba Drops",
     "Rework",
     "Hack a Home",
-    "Buy The World"
+    "Buy The World",
+    "Pixl"
   ],
-  "lastCheck": "2026-06-25T12:52:54.572Z"
+  "lastCheck": "2026-06-25T18:49:55.328Z"
 }
