@@ -3,14 +3,18 @@ import { diffEvents, isFirstRun } from './diff';
 import { sendNotification } from './mailer';
 import { displayResults } from './display';
 import { log } from './logger';
+import { config } from './config';
 
-async function main(): Promise<void> {
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runOnce(checkOnly: boolean): Promise<void> {
   const start = performance.now();
 
   log.banner();
   log.timestamp();
 
-  const checkOnly = process.argv.includes('--check');
   const firstRun = isFirstRun();
 
   // Fetch
@@ -20,7 +24,7 @@ async function main(): Promise<void> {
     data = await fetchYSWSData();
   } catch (err) {
     log.error(`Failed to fetch data: ${(err as Error).message}`);
-    process.exit(1);
+    throw err;
   }
 
   const totalEvents =
@@ -56,6 +60,35 @@ async function main(): Promise<void> {
   }
 
   log.elapsed(performance.now() - start);
+}
+
+async function runContinuously(checkOnly: boolean): Promise<void> {
+  const intervalSeconds = Math.max(10, config.runtime.intervalSeconds);
+
+  log.info(`Continuous mode enabled — checking every ${intervalSeconds}s`);
+
+  while (true) {
+    try {
+      await runOnce(checkOnly);
+    } catch (err) {
+      log.error(`Check failed: ${(err as Error).message}`);
+    }
+
+    log.info(`Next check in ${intervalSeconds}s`);
+    await sleep(intervalSeconds * 1000);
+  }
+}
+
+async function main(): Promise<void> {
+  const checkOnly = process.argv.includes('--check');
+  const continuous = process.argv.includes('--watch') || process.env.HCNOTICER_WATCH === 'true';
+
+  if (continuous) {
+    await runContinuously(checkOnly);
+    return;
+  }
+
+  await runOnce(checkOnly);
 }
 
 main().catch((err) => {

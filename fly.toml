@@ -1,0 +1,14 @@
+app = "hcnoticer"
+primary_region = "gru"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  STATE_FILE = "/data/state.json"
+  HCNOTICER_INTERVAL_SECONDS = "300"
+
+[[mounts]]
+  source = "hcnoticer_data"
+  destination = "/data"

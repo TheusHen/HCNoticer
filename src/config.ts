@@ -3,7 +3,12 @@ import * as path from 'path';
 
 dotenv.config();
 
+const intervalSeconds = Number(process.env.HCNOTICER_INTERVAL_SECONDS || '300');
+
 export const config = {
+  runtime: {
+    intervalSeconds: Number.isFinite(intervalSeconds) ? intervalSeconds : 300,
+  },
   mailersend: {
     apiKey: process.env.MAILERSEND_API_KEY || '',
   },

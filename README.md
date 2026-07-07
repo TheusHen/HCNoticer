@@ -38,6 +38,25 @@ npm run check
 
 Run it on a schedule (e.g. cron every hour) to stay notified about new YSWS programs.
 
+## Fly.io
+
+The GitHub Actions workflow still works as before. To run HCNoticer continuously on Fly.io instead, deploy it as a worker:
+
+```bash
+fly launch --no-deploy
+fly volumes create hcnoticer_data --region gru --size 1
+fly secrets set \
+  MAILERSEND_API_KEY=mlsn.xxxxx \
+  EMAIL_FROM_NAME=HCNoticer \
+  EMAIL_FROM_EMAIL=noreply@your-domain.com \
+  EMAIL_TO=recipient@example.com
+fly deploy
+```
+
+Fly uses `npm run start:fly`, which runs `node dist/index.js --watch`.
+The worker checks every `HCNOTICER_INTERVAL_SECONDS` seconds, defaulting to 300 seconds in `fly.toml`.
+Its state is stored at `/data/state.json` on the Fly volume, so it keeps tracking events across restarts and deploys without relying on GitHub commits.
+
 ## License
 
 MIT

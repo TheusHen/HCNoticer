@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:fly": "node dist/index.js --watch",
     "dev": "ts-node src/index.ts",
     "check": "node dist/index.js --check"
   },
