@@ -1,6 +1,11 @@
 {
   "knownEvents": [
+    "Anvil",
+    "Treasure Hunt",
+    "Alchemize",
     "BLARE",
+    "Thing on Desk",
+    "ArcadAi",
     "Calculate",
     "You Snake We Snake",
     "MetroShip",
@@ -162,12 +167,11 @@
     "Silicon",
     "cmd + k",
     "Solder",
-    "ArcadAi",
+    "Pixl",
     "Kintsugi",
     "flagged",
     "Bestsellr",
     "Hackanomous",
-    "Alchemize",
     "Jus'STUDY",
     "Kit Lab",
     "MakerCreate",
@@ -201,8 +205,7 @@
     "Winter Boba Drops",
     "Rework",
     "Hack a Home",
-    "Buy The World",
-    "Pixl"
+    "Buy The World"
   ],
-  "lastCheck": "2026-07-09T15:11:38.819Z"
+  "lastCheck": "2026-07-09T19:47:24.029Z"
 }
