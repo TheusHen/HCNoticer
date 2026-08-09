@@ -1,6 +1,8 @@
 {
   "knownEvents": [
+    "CloudFall",
     "Braize",
+    "CQ",
     "You Spud, We Spud",
     "Breadboard",
     "Premiere",
@@ -214,5 +216,5 @@
     "Buy The World",
     "Survive"
   ],
-  "lastCheck": "2026-08-09T12:51:18.073Z"
+  "lastCheck": "2026-08-09T18:41:03.640Z"
 }
