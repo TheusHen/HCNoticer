@@ -1,6 +1,7 @@
 {
   "knownEvents": [
     "CloudFall",
+    "3AM",
     "Braize",
     "CQ",
     "You Spud, We Spud",
@@ -12,6 +13,7 @@
     "Alchemize",
     "BLARE",
     "Thing on Desk",
+    "Future",
     "ArcadAi",
     "Calculate",
     "You Snake We Snake",
@@ -157,6 +159,8 @@
     "Shipwrecked",
     "Neighborhood",
     "Carnival",
+    "Jame Gam",
+    "Tagless",
     "Enclosure",
     "iplace",
     "Hacklet v2",
@@ -175,6 +179,8 @@
     "Silicon",
     "cmd + k",
     "Solder",
+    "Hackxpansion",
+    "Improv",
     "Pixl",
     "Kintsugi",
     "flagged",
@@ -183,7 +189,6 @@
     "Jus'STUDY",
     "Kit Lab",
     "MakerCreate",
-    "Shrine",
     "issued",
     "Apogee",
     "Servo",
@@ -216,5 +221,5 @@
     "Buy The World",
     "Survive"
   ],
-  "lastCheck": "2026-08-10T18:57:41.703Z"
+  "lastCheck": "2026-08-11T01:47:32.553Z"
 }
