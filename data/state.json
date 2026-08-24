@@ -1,5 +1,9 @@
 {
   "knownEvents": [
+    "Back to the Future",
+    "Out to C",
+    "Hackxpansion",
+    "Gadget Market",
     "CloudFall",
     "3AM",
     "Braize",
@@ -159,6 +163,7 @@
     "Shipwrecked",
     "Neighborhood",
     "Carnival",
+    "Pixl",
     "Jame Gam",
     "Tagless",
     "Enclosure",
@@ -179,9 +184,8 @@
     "Silicon",
     "cmd + k",
     "Solder",
-    "Hackxpansion",
+    "Trek",
     "Improv",
-    "Pixl",
     "Kintsugi",
     "flagged",
     "Bestsellr",
@@ -221,5 +225,5 @@
     "Buy The World",
     "Survive"
   ],
-  "lastCheck": "2026-08-23T18:30:16.188Z"
+  "lastCheck": "2026-08-24T01:19:08.001Z"
 }
