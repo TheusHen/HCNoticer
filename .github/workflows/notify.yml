@@ -31,9 +31,16 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
 
       - name: Commit state
+        env:
+          CO_AUTHOR_NAME: ${{ vars.CO_AUTHOR_NAME }}
+          CO_AUTHOR_EMAIL: ${{ vars.CO_AUTHOR_EMAIL }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/state.json
-          git diff --cached --quiet || git commit -m "chore: update state"
+          # Defaults to you as Co-authored-by. Override via repo
+          # Variables CO_AUTHOR_NAME / CO_AUTHOR_EMAIL if needed.
+          CO_AUTHOR_NAME="${CO_AUTHOR_NAME:-$GITHUB_REPOSITORY_OWNER}"
+          CO_AUTHOR_EMAIL="${CO_AUTHOR_EMAIL:-mmmatheushenriqueee@gmail.com}"
+          git diff --cached --quiet || git commit -m "chore: update state" -m "Co-authored-by: $CO_AUTHOR_NAME <$CO_AUTHOR_EMAIL>"
           git push

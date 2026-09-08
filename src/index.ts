@@ -1,9 +1,11 @@
 import { fetchYSWSData } from './fetcher';
-import { diffEvents, isFirstRun } from './diff';
+import { fetchDevpostHackathons } from './devpost';
+import { diffEvents, diffDevpostEvents, isFirstRun } from './diff';
 import { sendNotification } from './mailer';
 import { displayResults } from './display';
 import { log } from './logger';
 import { config } from './config';
+import { NewEventsResult, YSWSEvent } from './types';
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -17,27 +19,46 @@ async function runOnce(checkOnly: boolean): Promise<void> {
 
   const firstRun = isFirstRun();
 
-  // Fetch
-  log.info('Fetching YSWS catalog...');
-  let data;
-  try {
-    data = await fetchYSWSData();
-  } catch (err) {
-    log.error(`Failed to fetch data: ${(err as Error).message}`);
-    throw err;
+  // Fetch both sources in parallel — Devpost failing shouldn't kill YSWS
+  log.info('Fetching YSWS catalog + Devpost hackathons...');
+  const [yswsSettled, devpostSettled] = await Promise.allSettled([
+    fetchYSWSData(),
+    fetchDevpostHackathons(),
+  ]);
+
+  let yswsTotal = 0;
+  let devpostTotal = 0;
+  const results: NewEventsResult[] = [];
+
+  if (yswsSettled.status === 'fulfilled') {
+    const data = yswsSettled.value;
+    yswsTotal =
+      (data.limitedTime?.length || 0) +
+      (data.indefinite?.length || 0) +
+      (data.recentlyEnded?.length || 0) +
+      (data.drafts?.length || 0);
+    log.success(`Fetched ${yswsTotal} events from YSWS Catalog`);
+    log.info('Comparing YSWS with known events...');
+    results.push(...diffEvents(data));
+  } else {
+    log.error(`Failed to fetch YSWS data: ${(yswsSettled.reason as Error)?.message}`);
   }
 
-  const totalEvents =
-    (data.limitedTime?.length || 0) +
-    (data.indefinite?.length || 0) +
-    (data.recentlyEnded?.length || 0) +
-    (data.drafts?.length || 0);
+  if (devpostSettled.status === 'fulfilled') {
+    const devpostEvents: YSWSEvent[] = devpostSettled.value;
+    devpostTotal = devpostEvents.length;
+    log.success(`Fetched ${devpostTotal} online/open hackathons from Devpost`);
+    log.info('Comparing Devpost with known events...');
+    results.push(...diffDevpostEvents(devpostEvents));
+  } else {
+    log.error(`Failed to fetch Devpost data: ${(devpostSettled.reason as Error)?.message}`);
+  }
 
-  log.success(`Fetched ${totalEvents} events from YSWS Catalog`);
+  if (yswsSettled.status === 'rejected' && devpostSettled.status === 'rejected') {
+    throw (yswsSettled as PromiseRejectedResult).reason;
+  }
 
-  // Diff
-  log.info('Comparing with known events...');
-  const results = diffEvents(data);
+  const totalTracked = yswsTotal + devpostTotal;
   const totalNew = results.reduce((sum, r) => sum + r.newEvents.length, 0);
 
   if (firstRun && totalNew > 0) {
@@ -45,7 +66,7 @@ async function runOnce(checkOnly: boolean): Promise<void> {
   }
 
   // Display
-  displayResults(results, totalEvents);
+  displayResults(results, totalTracked, yswsTotal, devpostTotal);
 
   // Email (skip in check-only mode)
   if (checkOnly) {

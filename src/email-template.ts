@@ -1,4 +1,4 @@
-import { YSWSEvent, NewEventsResult } from './types';
+import { YSWSEvent, NewEventsResult, HackathonSource } from './types';
 import {
   stripHtml,
   sanitizeSlackUrl,
@@ -7,6 +7,7 @@ import {
   isExpired,
   extractDeadlineFromHtml,
 } from './sanitize';
+import { config } from './config';
 
 function esc(text: string): string {
   return text
@@ -27,17 +28,25 @@ function sortResults(results: NewEventsResult[]): NewEventsResult[] {
   });
 }
 
-function splitByStatus(results: NewEventsResult[]) {
+function eventsOf(results: NewEventsResult[], source: HackathonSource): YSWSEvent[] {
+  const out: YSWSEvent[] = [];
+  for (const r of results) {
+    const src: HackathonSource = r.source || 'ysws';
+    if (src !== source) continue;
+    out.push(...r.newEvents);
+  }
+  return out;
+}
+
+function splitByStatus(events: YSWSEvent[]) {
   const active: YSWSEvent[] = [];
   const draft: YSWSEvent[] = [];
   const ended: YSWSEvent[] = [];
 
-  for (const r of results) {
-    for (const e of r.newEvents) {
-      if (e.status === 'active') active.push(e);
-      else if (e.status === 'draft') draft.push(e);
-      else ended.push(e);
-    }
+  for (const e of events) {
+    if (e.status === 'active') active.push(e);
+    else if (e.status === 'draft') draft.push(e);
+    else ended.push(e);
   }
   return { active, draft, ended };
 }
@@ -76,9 +85,40 @@ function renderEndedLine(e: YSWSEvent): string {
   return `${esc(e.name)}`;
 }
 
+function renderDevpostCard(e: YSWSEvent): string {
+  const meta: string[] = [];
+  if (e.organization) meta.push(esc(e.organization));
+  if (e.submissionDates) meta.push(esc(e.submissionDates));
+  if (typeof e.registrations === 'number') meta.push(`${e.registrations.toLocaleString('en-US')} participants`);
+  if (e.prize) meta.push(`Prize: ${esc(e.prize)}`);
+  if (e.timeLeft) meta.push(esc(e.timeLeft));
+  if (e.themes?.length) meta.push(esc(e.themes.join(', ')));
+
+  const link = e.url || e.website;
+  return `<tr><td style="padding:10px 14px;border-bottom:1px solid #f0f0f0;">
+<strong style="font-size:14px;color:#111;">${esc(e.name)}</strong>${deadlineTag(e)}<br>
+${meta.length ? `<span style="font-size:12px;color:#555;">${meta.join(' &middot; ')}</span>` : ''}
+${link ? `<br><a href="${esc(link)}" style="color:#2563eb;text-decoration:none;font-size:13px;">View on Devpost &rarr;</a>` : ''}
+</td></tr>`;
+}
+
+function sectionHeader(title: string, count: number, color: { bg: string; border: string; text: string }): string {
+  return `<tr><td style="padding:8px 14px;background:${color.bg};border-left:3px solid ${color.border};font-size:13px;font-weight:700;color:${color.text};text-transform:uppercase;letter-spacing:0.5px;">
+${esc(title)} (${count})
+</td></tr>`;
+}
+
+function moreNote(total: number, shown: number): string {
+  if (total <= shown) return '';
+  return `<tr><td style="padding:6px 14px;font-size:12px;color:#888;">+${total - shown} more (see terminal / next email)</td></tr>`;
+}
+
 export function buildEmailHtml(results: NewEventsResult[]): string {
-  const { active, draft, ended } = splitByStatus(results);
-  const totalNew = active.length + draft.length + ended.length;
+  const limit = config.email.maxPerSource;
+  const yswsEvents = eventsOf(results, 'ysws');
+  const devpostEvents = eventsOf(results, 'devpost');
+  const { active, draft, ended } = splitByStatus(yswsEvents);
+  const totalNew = yswsEvents.length + devpostEvents.length;
   const now = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -89,38 +129,56 @@ export function buildEmailHtml(results: NewEventsResult[]): string {
 
   let body = '';
 
-  // Active events — full cards
-  if (active.length > 0) {
+  // ── Section 1: HackClub YSWS (dedicated) ──
+  if (yswsEvents.length > 0) {
     body += `
-<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-<tr><td style="padding:8px 14px;background:#ecfdf5;border-left:3px solid #22c55e;font-size:13px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:0.5px;">
-Active (${active.length})
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;">
+<tr><td style="padding:12px 14px 4px;font-size:15px;font-weight:800;color:#111;">
+HackClub YSWS (${yswsEvents.length})
 </td></tr>
-${active.map(renderActiveCard).join('')}
 </table>`;
-  }
-
-  // Drafts — compact rows
-  if (draft.length > 0) {
-    body += `
-<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-<tr><td style="padding:8px 14px;background:#fefce8;border-left:3px solid #eab308;font-size:13px;font-weight:700;color:#854d0e;text-transform:uppercase;letter-spacing:0.5px;">
-Drafts (${draft.length})
-</td></tr>
-${draft.map(renderDraftRow).join('')}
+    const shownActive = active.slice(0, limit);
+    const shownDraft = draft.slice(0, limit);
+    if (shownActive.length > 0) {
+      body += `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+${sectionHeader('Active', active.length, { bg: '#ecfdf5', border: '#22c55e', text: '#166534' })}
+${shownActive.map(renderActiveCard).join('')}
+${moreNote(active.length, shownActive.length)}
 </table>`;
-  }
-
-  // Ended — plain comma-separated list
-  if (ended.length > 0) {
-    body += `
-<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-<tr><td style="padding:8px 14px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:0.5px;">
-Ended (${ended.length})
-</td></tr>
+    }
+    if (shownDraft.length > 0) {
+      body += `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+${sectionHeader('Drafts', draft.length, { bg: '#fefce8', border: '#eab308', text: '#854d0e' })}
+${shownDraft.map(renderDraftRow).join('')}
+${moreNote(draft.length, shownDraft.length)}
+</table>`;
+    }
+    if (ended.length > 0) {
+      body += `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+${sectionHeader('Ended', ended.length, { bg: '#fef2f2', border: '#ef4444', text: '#991b1b' })}
 <tr><td style="padding:10px 14px;font-size:12px;color:#888;line-height:1.6;">
 ${ended.map(renderEndedLine).join(', ')}
 </td></tr>
+</table>`;
+    }
+  }
+
+  // ── Section 2: General hackathons · Devpost (online, open) ──
+  if (devpostEvents.length > 0) {
+    const shown = devpostEvents.slice(0, limit);
+    body += `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;">
+<tr><td style="padding:12px 14px 4px;font-size:15px;font-weight:800;color:#111;">
+Hackathons Gerais · Devpost <span style="font-weight:400;font-size:12px;color:#666;">(online, open · ${devpostEvents.length})</span>
+</td></tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+${sectionHeader('Online · Open', devpostEvents.length, { bg: '#eff6ff', border: '#3b82f6', text: '#1e40af' })}
+${shown.map(renderDevpostCard).join('')}
+${moreNote(devpostEvents.length, shown.length)}
 </table>`;
   }
 
@@ -137,14 +195,14 @@ ${ended.map(renderEndedLine).join(', ')}
 </td></tr>
 
 <!-- Body -->
-<tr><td style="padding:20px 10px;">
+<tr><td style="padding:10px 10px 20px;">
 ${body}
 </td></tr>
 
 <!-- Footer -->
 <tr><td style="padding:14px 24px;text-align:center;border-top:1px solid #eee;">
 <p style="margin:0;font-size:11px;color:#aaa;">
-<a href="https://github.com/TheusHen/HCNoticer" style="color:#ec3750;text-decoration:none;">HCNoticer</a> &middot; <a href="https://ysws.hackclub.com" style="color:#ec3750;text-decoration:none;">YSWS Catalog</a>
+<a href="https://github.com/TheusHen/HCNoticer" style="color:#ec3750;text-decoration:none;">HCNoticer</a> &middot; <a href="https://ysws.hackclub.com" style="color:#ec3750;text-decoration:none;">YSWS Catalog</a> &middot; <a href="https://devpost.com/hackathons" style="color:#ec3750;text-decoration:none;">Devpost</a>
 </p>
 </td></tr>
 
@@ -154,9 +212,17 @@ ${body}
 }
 
 export function buildEmailSubject(results: NewEventsResult[]): string {
-  const { active, draft, ended } = splitByStatus(results);
-  const totalNew = active.length + draft.length + ended.length;
-  const names = active.concat(draft).slice(0, 3).map(e => e.name);
+  const yswsCount = eventsOf(results, 'ysws').length;
+  const devpostCount = eventsOf(results, 'devpost').length;
+  const totalNew = yswsCount + devpostCount;
+  const names = eventsOf(results, 'ysws')
+    .concat(eventsOf(results, 'devpost'))
+    .slice(0, 3)
+    .map(e => e.name);
   const suffix = totalNew > 3 ? ` +${totalNew - 3} more` : '';
-  return `[HCNoticer] ${totalNew} new: ${names.join(', ')}${suffix}`;
+  const breakdown =
+    yswsCount > 0 && devpostCount > 0
+      ? `${yswsCount} YSWS + ${devpostCount} Devpost`
+      : `${totalNew} new`;
+  return `[HCNoticer] ${breakdown}: ${names.join(', ')}${suffix}`;
 }

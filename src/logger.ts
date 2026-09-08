@@ -49,14 +49,15 @@ export const log = {
     console.log(`  ${chalk.red('✗')} ${chalk.red(msg)}`);
   },
 
-  event(name: string, status: string, deadline: string, category: string) {
+  event(name: string, status: string | undefined, deadline: string, category: string) {
     const statusColors: Record<string, chalk.Chalk> = {
       active: chalk.green,
       ended: chalk.red,
       draft: chalk.yellow,
     };
-    const colorFn = statusColors[status] || chalk.gray;
-    const statusTag = colorFn(`[${status.toUpperCase()}]`);
+    const safeStatus = status || 'unknown';
+    const colorFn = statusColors[safeStatus] || chalk.gray;
+    const statusTag = colorFn(`[${safeStatus.toUpperCase()}]`);
     const deadlineTag = deadline
       ? DIM(` — ${deadline}`)
       : '';
