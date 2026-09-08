@@ -29,6 +29,11 @@ jobs:
           EMAIL_FROM_NAME: ${{ secrets.EMAIL_FROM_NAME }}
           EMAIL_FROM_EMAIL: ${{ secrets.EMAIL_FROM_EMAIL }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          YSWS_API_URL: ${{ vars.YSWS_API_URL }}
+          DEVPOST_API_URL: ${{ vars.DEVPOST_API_URL }}
+          DEVPOST_MAX_PAGES: ${{ vars.DEVPOST_MAX_PAGES }}
+          DEVPOST_SEARCH: ${{ vars.DEVPOST_SEARCH }}
+          EMAIL_MAX_PER_SOURCE: ${{ vars.EMAIL_MAX_PER_SOURCE }}
 
       - name: Commit state
         env:

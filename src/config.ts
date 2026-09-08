@@ -3,14 +3,10 @@ import * as path from 'path';
 
 dotenv.config();
 
-const intervalSeconds = Number(process.env.HCNOTICER_INTERVAL_SECONDS || '300');
 const devpostMaxPages = Number(process.env.DEVPOST_MAX_PAGES || '5');
 const maxPerSource = Number(process.env.EMAIL_MAX_PER_SOURCE || '10');
 
 export const config = {
-  runtime: {
-    intervalSeconds: Number.isFinite(intervalSeconds) ? intervalSeconds : 300,
-  },
   mailersend: {
     apiKey: process.env.MAILERSEND_API_KEY || '',
   },

@@ -42,26 +42,15 @@ npm run check
 5. Sends an HTML email with a dedicated **HackClub YSWS** section plus a **Hackathons Gerais · Devpost** section (each capped at `EMAIL_MAX_PER_SOURCE`, default 10)
 6. Updates the state file for the next run
 
-Run it on a schedule (e.g. cron every hour) to stay notified about new YSWS programs.
-
-## Fly.io
-
-The GitHub Actions workflow still works as before. To run HCNoticer continuously on Fly.io instead, deploy it as a worker:
+Run it via GitHub Actions (every 6 hours by default — see `.github/workflows/notify.yml`) or locally:
 
 ```bash
-fly launch --no-deploy
-fly volumes create hcnoticer_data --region gru --size 1
-fly secrets set \
-  MAILERSEND_API_KEY=mlsn.xxxxx \
-  EMAIL_FROM_NAME=HCNoticer \
-  EMAIL_FROM_EMAIL=noreply@your-domain.com \
-  EMAIL_TO=recipient@example.com
-fly deploy
+npm start
 ```
 
-Fly uses `npm run start:fly`, which runs `node dist/index.js --watch`.
-The worker checks every `HCNOTICER_INTERVAL_SECONDS` seconds, defaulting to 300 seconds in `fly.toml`.
-Its state is stored at `/data/state.json` on the Fly volume, so it keeps tracking events across restarts and deploys without relying on GitHub commits.
+The Actions workflow installs deps, builds, runs `npm start` (which fetches both sources, sends the email via MailerSend when there are new events, and updates `data/state.json`), then commits and pushes the updated state back to the repo — no extra infrastructure needed.
+
+Configure the required Secrets (`MAILERSEND_API_KEY`, `EMAIL_FROM_NAME`, `EMAIL_FROM_EMAIL`, `EMAIL_TO`) and optional Variables (`YSWS_API_URL`, `DEVPOST_API_URL`, `DEVPOST_MAX_PAGES`, `DEVPOST_SEARCH`, `EMAIL_MAX_PER_SOURCE`, `CO_AUTHOR_NAME`, `CO_AUTHOR_EMAIL`) under Settings → Secrets and variables → Actions.
 
 ## License
 
