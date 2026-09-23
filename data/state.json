@@ -1,5 +1,6 @@
 {
   "knownEvents": [
+    "ysws:Crescent",
     "ysws:Back to the Future",
     "ysws:Out to C",
     "ysws:Hackxpansion",
@@ -9,6 +10,7 @@
     "ysws:Braize",
     "ysws:CQ",
     "ysws:You Spud, We Spud",
+    "ysws:Snowglobe",
     "ysws:Breadboard",
     "ysws:Premiere",
     "ysws:Circazine",
@@ -184,6 +186,8 @@
     "ysws:Silicon",
     "ysws:cmd + k",
     "ysws:Solder",
+    "ysws:Wonders",
+    "ysws:Utopia",
     "ysws:Trek",
     "ysws:Improv",
     "ysws:Kintsugi",
@@ -191,6 +195,7 @@
     "ysws:Bestsellr",
     "ysws:Hackanomous",
     "ysws:Jus'STUDY",
+    "ysws:Bugged",
     "ysws:Kit Lab",
     "ysws:MakerCreate",
     "ysws:issued",
@@ -244,22 +249,22 @@
     "devpost:31042",
     "devpost:30744",
     "devpost:30632",
-    "devpost:31098",
     "devpost:31101",
     "devpost:31196",
+    "devpost:31098",
     "devpost:30764",
     "devpost:31315",
-    "devpost:30559",
     "devpost:30447",
+    "devpost:30559",
     "devpost:31127",
     "devpost:31249",
-    "devpost:31108",
     "devpost:31231",
+    "devpost:31108",
     "devpost:31035",
     "devpost:30801",
     "devpost:31396",
     "devpost:31399",
     "devpost:31095"
   ],
-  "lastCheck": "2026-09-22T20:58:04.475Z"
+  "lastCheck": "2026-09-23T03:42:27.838Z"
 }
